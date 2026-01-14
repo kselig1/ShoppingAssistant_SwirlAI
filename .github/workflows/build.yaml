@@ -1,0 +1,71 @@
+name: Build and Push to ECR 
+
+on: 
+  push: 
+    branches: 
+      - notyet 
+
+env: 
+  AWS_REGION: us-east-2 
+  ECR_REPO_API: csa/csa-backend 
+  ECR_REPO_STREAMLIT: csa/csa-frontend 
+  AWS_ACCOUNT_ID: 912988925636 
+  AWS_ROLE_ARN: arn:aws:iam::912988925636:role/github-ecr-minimal 
+
+jobs: 
+  build-api: 
+    runs-on: ubuntu-latest 
+      permissions: 
+        id-token: write  
+        contents: read  
+
+      steps: 
+        - name: Checkout code  
+          uses: actions/checkout@v4 
+
+        - name: Configure AWS credentials 
+          uses: aws-actions/configure-aws-credentials@v4 
+            with: 
+              role-to-assume: ${{ env.AWS_ROLE_ARN }} 
+              role-session-name: GitHubActions 
+              aws-region: ${{ env.AWS_REGION }}  
+
+        - name: Login to Amazon ECR 
+          id: login-ecr 
+          uses: aws-actions/amazon-ecr-login@v2  
+
+        - name: Setup Docker Buildx 
+          uses: docker/setup-buildx-action@v3 
+
+        - name: Build and Push API Image  
+          env: 
+            ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }} 
+            IMAGE_TAG: ${{ github.sha }}  
+          run: | 
+            SHORT_SHA=${IMAGE_TAG:0:8} 
+            echo "Building API Docker image ..." 
+            docker build \ 
+              -t ${ECR_REGISTRY}/${ECR_REPO_API}:${SHORT_SHA} \ 
+              -t ${ECR_REGISTRY}/${ECR_REPO_API}:latest \  
+              -f Dockerfile \ 
+              . 
+            docker push ${ECR_REGISTRY}/${ECR_REPO_API}:${SHORT_SHA}  
+            docker push ${ECR_REGISTRY}/${ECR_REPO_API}:latest   
+            echo "API Docker image built and pushed to ECR with tags: ${SHORT_SHA} and latest" 
+
+  build-streamlit
+    runs-on: ubuntu-latest  
+      permissions:  
+        id-token: write   
+        contents: read    
+
+      steps: 
+        - name: Checkout code  
+          uses: actions/checkout@v4 
+
+        - name: Configure AWS credentials 
+          uses: aws-actions/configure-aws-credentials@v4 
+            with: 
+              role-to-assume: ${{ env.AWS_ROLE_ARN }} 
+              role-session-name: GitHubActions 
+              aws-region: ${{ env.AWS_REGION }}  
