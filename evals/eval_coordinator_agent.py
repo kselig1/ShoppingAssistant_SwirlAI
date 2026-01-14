@@ -5,7 +5,7 @@ from api.agent.graph import State
 from time import sleep
 
 ACC_THRESHOLD = 0.6
-SLEEP_TIME  = 5
+SLEEP_TIME  = 10
 
 client = Client() 
 
@@ -19,6 +19,7 @@ def next_agent_evaluator(run, example):
 results = client.evaluate(
     lambda x: coordinator_agent(State(messages=x["messages"])),
     data="coordinator-eval-dataset",
+    max_concurrency=5,
     evaluators=[
         next_agent_evaluator
     ],
@@ -32,6 +33,17 @@ results_resp = client.read_project(
     project_name=results.experiment_name, 
     include_stats=True
 )
+
+# Debug: print available keys if needed
+if results_resp.feedback_stats is None:
+    raise ValueError("feedback_stats is None. The evaluation may not have completed yet.")
+
+evaluator_stats = results_resp.feedback_stats.get("next_agent_evaluator")
+if evaluator_stats is None:
+    raise ValueError(
+        f"Evaluator 'next_agent_evaluator' not found in feedback_stats. "
+        f"Available keys: {list(results_resp.feedback_stats.keys())}"
+    )
 
 avg_metric = results_resp.feedback_stats.get("next_agent_evaluator").get("avg")
 errors = results_resp.feedback_stats.get("next_agent_evaluator").get("errors") 
