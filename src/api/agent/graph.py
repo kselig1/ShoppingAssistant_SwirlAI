@@ -12,6 +12,7 @@ import numpy as np
 import json
 from langgraph.checkpoint.postgres import PostgresSaver
 from pydantic import Field
+from src.api.core.config import config
 
 class AgentProperties(BaseModel): 
     iteration: int = 0 
@@ -195,7 +196,7 @@ def run_agent_stream_wrapper(question: str, thread_id: str):
         else: 
             return False
 
-    qdrant_client = QdrantClient(url="http://qdrant:6333")  
+    qdrant_client = QdrantClient(url=config.QDRANT_URL, api_key=config.QDRANT_API_KEY)  
 
     initial_state = {
         "messages": [{"role": "user", "content": question}], 
@@ -228,7 +229,7 @@ def run_agent_stream_wrapper(question: str, thread_id: str):
         "cart_id": thread_id
     } 
 
-    config = {"configurable": {"thread_id": thread_id}}
+    checkpoint_config = {"configurable": {"thread_id": thread_id}}
 
     with PostgresSaver.from_conn_string("postgresql://langgraph_user:langgraph_password@postgres:5432/langgraph_db") as checkpointer: 
 
@@ -236,7 +237,7 @@ def run_agent_stream_wrapper(question: str, thread_id: str):
 
         for chunk in graph.stream(
             initial_state, 
-            config=config,
+            config=checkpoint_config,
             stream_mode=["debug", "values"]
         ):
             processed_chunk = _process_graph_event(chunk) 
