@@ -11,6 +11,7 @@ from qdrant_client.models import Filter, FieldCondition, MatchValue
 import numpy as np
 import json
 from langgraph.checkpoint.postgres import PostgresSaver
+from langgraph.checkpoint.memory import MemorySaver  
 from pydantic import Field
 from src.api.core.config import config
 
@@ -231,22 +232,47 @@ def run_agent_stream_wrapper(question: str, thread_id: str):
 
     checkpoint_config = {"configurable": {"thread_id": thread_id}}
 
-    with PostgresSaver.from_conn_string("postgresql://langgraph_user:langgraph_password@postgres:5432/langgraph_db") as checkpointer: 
-
+    # Try to use Postgres, fallback to MemorySaver
+    try:
+        # Try to create PostgresSaver (this will fail if DB is unreachable)
+        checkpointer = PostgresSaver.from_conn_string(
+            "postgresql://langgraph_user:langgraph_password@postgres:5435/langgraph_db"
+        )
+        # Use 'with' to properly manage the connection
+        with checkpointer:
+            graph = workflow.compile(checkpointer=checkpointer)
+            
+            for chunk in graph.stream(
+                initial_state, 
+                config=checkpoint_config,
+                stream_mode=["debug", "values"]
+            ):
+                processed_chunk = _process_graph_event(chunk) 
+                
+                if processed_chunk:
+                    yield _string_for_sse(processed_chunk)
+                
+                if chunk[0] == "values": 
+                    result = chunk[1]
+                    
+    except Exception:
+        # Fallback to MemorySaver if Postgres fails
+        from langgraph.checkpoint.memory import MemorySaver
+        checkpointer = MemorySaver()
         graph = workflow.compile(checkpointer=checkpointer)
-
+        
         for chunk in graph.stream(
             initial_state, 
             config=checkpoint_config,
             stream_mode=["debug", "values"]
         ):
             processed_chunk = _process_graph_event(chunk) 
-
+            
             if processed_chunk:
                 yield _string_for_sse(processed_chunk)
-
+            
             if chunk[0] == "values": 
-                result = chunk[1] 
+                result = chunk[1]
 
     used_context = []  
     dummy_vector = np.zeros(1536).tolist() 
