@@ -299,7 +299,13 @@ def run_agent_stream_wrapper(question: str, thread_id: str):
         if image_url:  
             used_context.append({"image_url": image_url, "price": price, "description": item.description})
 
-    shopping_cart = get_shopping_cart(thread_id, thread_id)
+    try: 
+        shopping_cart = get_shopping_cart(thread_id, thread_id)
+    except Exception as e:
+        
+        print(f"Error getting shopping cart: {e}")
+        shopping_cart = []
+     
     shopping_cart_items = [
         {
             "price": item.get("price"),

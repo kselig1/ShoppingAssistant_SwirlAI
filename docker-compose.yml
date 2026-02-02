@@ -43,7 +43,8 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     restart: unless-stopped
     volumes:
-      - /home/k/AI-Engineering-Bootcamp/01-ai-engineering-bootcamp/postgres_data:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql/data
+      # - /home/k/AI-Engineering-Bootcamp/01-ai-engineering-bootcamp/postgres_data:/var/lib/postgresql/data
 
 
   # items_mcp_server:
