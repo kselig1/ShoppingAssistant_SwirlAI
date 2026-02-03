@@ -8,6 +8,7 @@ from langsmith import traceable, get_current_run_tree
 
 from qdrant_client import QdrantClient 
 from qdrant_client.models import Filter, FieldCondition, MatchValue, Prefetch, Document, FusionQuery
+from src.api.core.config import config
 
 from api.rag.utils.prompt_management import prompt_template_config
 
@@ -161,7 +162,7 @@ def rag_pipeline(question, qdrant_client,top_k=5):
 
 def rag_pipeline_wrapper(question, top_k=5): 
 
-    qdrant_client = QdrantClient(url="http://qdrant:6333") 
+    qdrant_client = QdrantClient(url=config.QDRANT_URL, api_key=config.QDRANT_API_KEY) 
 
     result = rag_pipeline(question, qdrant_client, top_k) 
 

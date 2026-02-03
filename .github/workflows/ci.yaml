@@ -36,6 +36,8 @@ jobs:
         LANGSMITH_API_KEY: ${{ secrets.LANGSMITH_API_KEY }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+        QDRANT_URL: "https://913ff993-95ff-4ce6-8e2b-e3dcf44a1615.us-east-1-1.aws.cloud.qdrant.io"
         PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
       run: |
         uv run python -m evals.eval_coordinator_agent

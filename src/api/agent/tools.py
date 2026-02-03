@@ -2,7 +2,7 @@ import openai
 from langsmith import traceable, get_current_run_tree
 from qdrant_client import QdrantClient
 from qdrant_client.models import Document, Prefetch, FusionQuery, Filter, FieldCondition, MatchAny, MatchValue
-
+from src.api.core.config import config
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import numpy as np
@@ -36,7 +36,7 @@ def retrieve_item_data(query, k=5):
 
     query_embedding = get_embedding(query)  
 
-    qdrant_client = QdrantClient(url="http://qdrant:6333")
+    qdrant_client = QdrantClient(url=config.QDRANT_URL, api_key=config.QDRANT_API_KEY)
 
     results = qdrant_client.query_points(
         collection_name="Amazon-items-collection-01-hybrid-search",
@@ -117,7 +117,7 @@ def retrieve_reviews_data(query, item_list,k=5):
 
     query_embedding = get_embedding(query)  
 
-    qdrant_client = QdrantClient(url="http://qdrant:6333")
+    qdrant_client = QdrantClient(url=config.QDRANT_URL, api_key=config.QDRANT_API_KEY)
 
     results = qdrant_client.query_points(
         collection_name="Amazon-items-collection-01-reviews",
@@ -225,7 +225,7 @@ def add_to_shopping_cart(items: list[dict], user_id: str, cart_id: str) -> str:
             product_id = item['product_id']
             quantity = item['quantity']
 
-            qdrant_client = QdrantClient(url="http://qdrant:6333")
+            qdrant_client = QdrantClient(url=config.QDRANT_URL, api_key=config.QDRANT_API_KEY)
 
             dummy_vector = np.zeros(1536).tolist()
             payload = qdrant_client.query_points(
