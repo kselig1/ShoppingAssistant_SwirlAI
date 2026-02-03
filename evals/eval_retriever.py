@@ -1,7 +1,8 @@
-from api.rag.retrieval_generation import rag_pipeline
+from api.agent.retrieval_generation import rag_pipeline
 
 from langsmith import Client
 from qdrant_client import QdrantClient
+from src.api.core.config import config
 
 from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
@@ -11,8 +12,9 @@ from ragas.embeddings import LangchainEmbeddingsWrapper
 
 ls_client = Client()
 qdrant_client = QdrantClient(
-    url=f"http://localhost:6333"
-)
+    url=config.QDRANT_URL,
+    api_key=config.QDRANT_API_KEY
+) 
 
 from ragas.dataset_schema import SingleTurnSample 
 from ragas.metrics import IDBasedContextPrecision, IDBasedContextRecall, Faithfulness, ResponseRelevancy
