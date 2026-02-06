@@ -10,7 +10,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, FieldCondition, MatchValue, Prefetch, Document, FusionQuery
 from src.api.core.config import config
 
-from api.rag.utils.prompt_management import prompt_template_config
+from api.agent.utils.prompt_management import prompt_template_config
 
 class RAGUsedContext(BaseModel):  
     id: str = Field(description="The id of the item used to answer the question")
