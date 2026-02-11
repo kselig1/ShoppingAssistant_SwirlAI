@@ -102,11 +102,11 @@ ShoppingAssistant_SwirlAI/
    Create a `.env` file in the root directory:
    ```env
    OPENAI_API_KEY=''
-   GROQ_API_KEY''
+   GROQ_API_KEY=''
    CO_API_KEY =''
    QDRANT_API_KEY=''
    QDRANT_URL=''
-   LANGSMITH_API_KEY
+   LANGSMITH_API_KEY=''
    LANGSMITH_TRACING = true 
    LANGSMITH_ENDPOINT = "https://api.smith.langchain.com"
    LANGSMITH_PROJECT = "rag-tracing" 
