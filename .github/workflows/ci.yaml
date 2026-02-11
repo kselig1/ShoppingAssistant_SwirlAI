@@ -39,5 +39,6 @@ jobs:
         QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
         QDRANT_URL: "https://913ff993-95ff-4ce6-8e2b-e3dcf44a1615.us-east-1-1.aws.cloud.qdrant.io"
         PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
+        SUPABASE_PASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
       run: |
         uv run python -m evals.eval_coordinator_agent

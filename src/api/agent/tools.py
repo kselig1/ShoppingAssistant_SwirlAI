@@ -210,13 +210,15 @@ def add_to_shopping_cart(items: list[dict], user_id: str, cart_id: str) -> str:
         A list of the items added to the shopping cart.
     """
 
-    conn = psycopg2.connect(
-        host="postgres",
-        port=5432,
-        database="langgraph_db",
-        user="langgraph_user",
-        password="langgraph_password"
-    )
+    # Connect to the database
+    USER = 'postgres.bydnmxkqwjsofgtzmfpl'
+    HOST = 'aws-1-us-east-2.pooler.supabase.com'
+    PORT = 5432
+    DBNAME = 'postgres'
+
+    DB_CONNECTION_STRING = f"postgresql://{USER}:{config.SUPABASE_PASSWORD}@{HOST}:{PORT}/{DBNAME}"
+
+    conn = psycopg2.connect(DB_CONNECTION_STRING)
     conn.autocommit = True
 
     with conn.cursor(cursor_factory=RealDictCursor) as cursor:
@@ -314,13 +316,15 @@ def get_shopping_cart(user_id: str, cart_id: str) -> list[dict]:
         List of dictionaries containing cart items
     """
     
-    conn = psycopg2.connect(
-        host="postgres",
-        port=5432,
-        database="langgraph_db",
-        user="langgraph_user",
-        password="langgraph_password"
-    )
+    # Connect to the database
+    USER = 'postgres.bydnmxkqwjsofgtzmfpl'
+    HOST = 'aws-1-us-east-2.pooler.supabase.com'
+    PORT = 5432
+    DBNAME = 'postgres'
+
+    DB_CONNECTION_STRING = f"postgresql://{USER}:{config.SUPABASE_PASSWORD}@{HOST}:{PORT}/{DBNAME}"
+
+    conn = psycopg2.connect(DB_CONNECTION_STRING)
     conn.autocommit = True
 
     with conn.cursor(cursor_factory=RealDictCursor) as cursor:
@@ -357,13 +361,15 @@ def remove_from_cart(product_id: str, user_id: str, cart_id: str) -> str:
         True if item was removed, False if item wasn't found
     """
     
-    conn = psycopg2.connect(
-        host="postgres",
-        port=5432,
-        database="langgraph_db",
-        user="langgraph_user",
-        password="langgraph_password"
-    )
+    # Connect to the database
+    USER = 'postgres.bydnmxkqwjsofgtzmfpl'
+    HOST = 'aws-1-us-east-2.pooler.supabase.com'
+    PORT = 5432
+    DBNAME = 'postgres'
+
+    DB_CONNECTION_STRING = f"postgresql://{USER}:{config.SUPABASE_PASSWORD}@{HOST}:{PORT}/{DBNAME}"
+
+    conn = psycopg2.connect(DB_CONNECTION_STRING)
     conn.autocommit = True
 
     with conn.cursor(cursor_factory=RealDictCursor) as cursor:
@@ -394,13 +400,15 @@ def check_warehouse_availability(items: list[dict]) -> dict:
         - details: detailed breakdown per warehouse with availability for each item
     """
     
-    conn = psycopg2.connect(
-        host="postgres",
-        port=5432,
-        database="langgraph_db",
-        user="langgraph_user",
-        password="langgraph_password"
-    )
+    # Connect to the database
+    USER = 'postgres.bydnmxkqwjsofgtzmfpl'
+    HOST = 'aws-1-us-east-2.pooler.supabase.com'
+    PORT = 5432
+    DBNAME = 'postgres'
+
+    DB_CONNECTION_STRING = f"postgresql://{USER}:{config.SUPABASE_PASSWORD}@{HOST}:{PORT}/{DBNAME}"
+
+    conn = psycopg2.connect(DB_CONNECTION_STRING)
     
     try:
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
@@ -533,13 +541,15 @@ def reserve_warehouse_items(reservations: list[dict]) -> dict:
         - failed_items: list of items that could not be reserved
     """
     
-    conn = psycopg2.connect(
-        host="postgres",
-        port=5432,
-        database="langgraph_db",
-        user="langgraph_user",
-        password="langgraph_password"
-    )
+    # Connect to the database
+    USER = 'postgres.bydnmxkqwjsofgtzmfpl'
+    HOST = 'aws-1-us-east-2.pooler.supabase.com'
+    PORT = 5432
+    DBNAME = 'postgres'
+
+    DB_CONNECTION_STRING = f"postgresql://{USER}:{config.SUPABASE_PASSWORD}@{HOST}:{PORT}/{DBNAME}"
+
+    conn = psycopg2.connect(DB_CONNECTION_STRING)
     conn.autocommit = False  # Use transaction
     
     try:

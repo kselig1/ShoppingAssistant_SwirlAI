@@ -234,12 +234,15 @@ def run_agent_stream_wrapper(question: str, thread_id: str):
 
     # Try to use Postgres, fallback to MemorySaver
     try:
-        # Try to create PostgresSaver (this will fail if DB is unreachable)
-        checkpointer = PostgresSaver.from_conn_string(
-            "postgresql://langgraph_user:langgraph_password@postgres:5435/langgraph_db"
-        )
-        # Use 'with' to properly manage the connection
-        with checkpointer:
+        # Use Supabase connection string (same pattern as tools.py)
+        USER = 'postgres.bydnmxkqwjsofgtzmfpl'
+        HOST = 'aws-1-us-east-2.pooler.supabase.com'
+        PORT = 5432
+        DBNAME = 'postgres'
+        
+        DB_CONNECTION_STRING = f"postgresql://{USER}:{config.SUPABASE_PASSWORD}@{HOST}:{PORT}/{DBNAME}"
+        
+        with PostgresSaver.from_conn_string(DB_CONNECTION_STRING) as checkpointer:
             graph = workflow.compile(checkpointer=checkpointer)
             
             for chunk in graph.stream(
@@ -255,8 +258,9 @@ def run_agent_stream_wrapper(question: str, thread_id: str):
                 if chunk[0] == "values": 
                     result = chunk[1]
                     
-    except Exception:
+    except Exception as e:
         # Fallback to MemorySaver if Postgres fails
+        print(f"Postgres connection failed: {e}")
         from langgraph.checkpoint.memory import MemorySaver
         checkpointer = MemorySaver()
         graph = workflow.compile(checkpointer=checkpointer)

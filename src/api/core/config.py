@@ -7,6 +7,7 @@ class Config(BaseSettings):
     CO_API_KEY: str = ''
     QDRANT_API_KEY: str
     QDRANT_URL: str
+    SUPABASE_PASSWORD: str
 
     model_config = SettingsConfigDict(env_file = ".env")
 
